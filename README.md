@@ -1,112 +1,129 @@
-Aquí tienes un archivo `README.md` basado en los archivos que aparecen en la imagen:
+# Práctica de Backup y Recuperación de Bases de Datos MySQL
 
-# Backup y Restauración de Bases de Datos MySQL
-
-Este proyecto contiene scripts y archivos SQL para realizar diferentes tipos de backups y restauración de bases de datos MySQL. A continuación, se describen los archivos y scripts incluidos en el proyecto y cómo utilizarlos.
+Este proyecto tiene como objetivo la implementación de scripts para la realización de backups lógicos y físicos de bases de datos MySQL, así como su restauración. También incluye la configuración de backups automáticos mediante cron jobs y permite la gestión segura de las bases de datos `schema_17_1`, `schema_17_2` y `schema_17_3`.
 
 ## Estructura del Proyecto
 
-- **DDL.sql**: Contiene las instrucciones para crear las estructuras de las bases de datos (esquemas y tablas).
-- **DML_schema_17_1.sql**, **DML_schema_17_2.sql**, **DML_schema_17_3.sql**: Estos archivos contienen los datos (instrucciones DML) para poblar las bases de datos `schema_17_1`, `schema_17_2`, y `schema_17_3` con datos específicos.
-- **logic_backup_all_db.sh**: Script para realizar un backup lógico completo de todas las bases de datos.
+El proyecto incluye scripts para las siguientes funcionalidades:
+
+### Archivos Principales
+
+- **DDL.sql**: Contiene las instrucciones de creación de la estructura de las bases de datos (schemas y tablas).
+- **DML_schema_17_1.sql**, **DML_schema_17_2.sql**, **DML_schema_17_3.sql**: Archivos con los comandos `INSERT` para poblar las bases de datos `schema_17_1`, `schema_17_2`, y `schema_17_3` respectivamente con datos de ejemplo.
+- **logic_backup_all_db.sh**: Script para realizar un backup lógico completo de todas las bases de datos (incluyendo tanto la estructura como los datos).
 - **logic_backup_main_data.sh**: Script para realizar un backup lógico que incluye solo los datos principales de las bases de datos.
-- **logic_backup_main_tables.sh**: Script para realizar un backup lógico que incluye solo las tablas principales de las bases de datos.
+- **logic_backup_main_tables.sh**: Script para realizar un backup lógico que incluye solo las tablas principales, sin los datos.
 - **physical_backup.sh**: Script para realizar un backup físico completo de las bases de datos.
-- **cron/**: Este directorio contiene scripts relacionados con la automatización de backups mediante cron jobs.
+- **restore_backup_schemas.sh**: Script para restaurar los backups físicos.
 
-## Descripción de los Archivos
+### Scripts de Backup
 
-### SQL Files
+#### Backup Lógico Completo
+Este script crea un backup lógico de todas las bases de datos (esquemas, tablas y datos):
 
-- **DDL.sql**: Este archivo SQL define la estructura de las bases de datos, incluyendo la creación de los esquemas y tablas. Se utiliza para restaurar la estructura sin datos.
-  
-  Para ejecutar este archivo y crear la estructura de las bases de datos:
-  
-  ```bash
-  mysql -u root -p < DDL.sql
-  ```
+```bash
+./logic_backup_all_db.sh
+```
 
-- **DML_schema_17_1.sql**, **DML_schema_17_2.sql**, **DML_schema_17_3.sql**: Estos archivos contienen los comandos `INSERT` para poblar las tablas de los esquemas `schema_17_1`, `schema_17_2` y `schema_17_3` con los datos correspondientes.
-  
-  Para restaurar los datos en las tablas, ejecuta los siguientes comandos para cada archivo:
-  
-  ```bash
-  mysql -u root -p schema_17_1 < DML_schema_17_1.sql
-  mysql -u root -p schema_17_2 < DML_schema_17_2.sql
-  mysql -u root -p schema_17_3 < DML_schema_17_3.sql
-  ```
+#### Backup Solo de Datos Principales
+Este script realiza un backup lógico de los datos principales de las bases de datos:
 
-### Scripts de Backup Lógico
+```bash
+./logic_backup_main_data.sh
+```
 
-- **logic_backup_all_db.sh**: Este script realiza un backup lógico completo de todas las bases de datos (`schema_17_1`, `schema_17_2`, y `schema_17_3`) e incluye tanto la estructura como los datos. 
+#### Backup de Tablas Principales
+Este script realiza un backup lógico de las tablas principales sin los datos:
 
-  Para ejecutarlo:
+```bash
+./logic_backup_main_tables.sh
+```
 
-  ```bash
-  ./logic_backup_all_db.sh
-  ```
+#### Backup Físico Completo
+Este script realiza un backup físico completo de las bases de datos en la ruta especificada. Asegúrate de ejecutarlo con permisos de superusuario:
 
-- **logic_backup_main_data.sh**: Este script realiza un backup lógico que incluye solo los datos principales de las bases de datos.
+```bash
+sudo ./physical_backup.sh /ruta/donde/guardar/el/backup
+```
 
-  Para ejecutarlo:
+### Script de Restauración
 
-  ```bash
-  ./logic_backup_main_data.sh
-  ```
+El script `restore_backup_schemas.sh` restaura los esquemas y datos desde un archivo de backup físico `.tar.gz`. Asegúrate de tener permisos de superusuario para ejecutar este script:
 
-- **logic_backup_main_tables.sh**: Este script realiza un backup lógico que incluye solo las tablas principales, sin los datos.
+```bash
+sudo ./restore_backup_schemas.sh /ruta/al/backup/BK_Fisico_TodosEsquemas_YYYYMMDD_HHMMSS.tar.gz
+```
 
-  Para ejecutarlo:
+## Configuración de Cron Jobs
 
-  ```bash
-  ./logic_backup_main_tables.sh
-  ```
+Puedes automatizar los backups utilizando cron jobs. Los scripts están preparados para realizar diferentes tipos de backups en intervalos específicos. Para configurarlos, puedes editar el cron ejecutando `crontab -e` y añadiendo las siguientes líneas:
 
-### Script de Backup Físico
+```bash
+# Backup de tablas principales cada día a las 3am y 3pm
+0 3,15 * * * /ruta/al/script/logic_backup_main_tables.sh
 
-- **physical_backup.sh**: Este script realiza un backup físico completo de los archivos de la base de datos. El backup físico copia los archivos binarios de MySQL en un directorio específico.
+# Backup de datos principales cada viernes
+0 0 * * 5 /ruta/al/script/logic_backup_main_data.sh
 
-  Para ejecutarlo, proporcionando la ruta donde se guardará el backup:
+# Backup completo el último día de cada mes
+0 0 28-31 * * [ "$(date +\%d -d tomorrow)" = "01" ] && /ruta/al/script/logic_backup_all_db.sh
+```
 
-  ```bash
-  ./physical_backup.sh /ruta/donde/guardar/el/backup
-  ```
+## Requisitos Previos
 
-### Directorio **cron**
+- **MySQL** o **MariaDB** instalado en el servidor.
+- Acceso al usuario `root` o un usuario con permisos adecuados para realizar operaciones de backup y restauración.
+- **Bash** para ejecutar los scripts.
 
-- Este directorio contiene scripts que puedes utilizar junto con **cron** para automatizar los backups. Los scripts programan backups automáticos según diferentes intervalos (diarios, semanales, mensuales).
-  
-  Para configurar estos cron jobs, puedes agregar las siguientes líneas en tu crontab ejecutando `crontab -e`:
+## Uso de los Scripts
 
-  ```bash
-  # Backup de tablas principales cada día a las 3am y 3pm
-  0 3,15 * * * /ruta/al/script/logic_backup_main_tables.sh
-  
-  # Backup de datos principales cada viernes
-  0 0 * * 5 /ruta/al/script/logic_backup_main_data.sh
-  
-  # Backup completo el último día de cada mes
-  0 0 28-31 * * [ "$(date +\%d -d tomorrow)" = "01" ] && /ruta/al/script/logic_backup_all_db.sh
-  ```
+1. **Clonar el repositorio**:
+
+   Clona este repositorio en tu máquina local o servidor:
+
+   ```bash
+   git clone https://github.com/cresb-49/PRACTICA_BACKUP_RECUPERACI-N_BD2.git
+   cd PRACTICA_BACKUP_RECUPERACI-N_BD2
+   ```
+
+2. **Configurar las bases de datos**:
+
+   Ejecuta el archivo `DDL.sql` para crear las estructuras de las bases de datos:
+
+   ```bash
+   mysql -u root -p < DDL.sql
+   ```
+
+   Luego, ejecuta los archivos `DML` para poblar las tablas:
+
+   ```bash
+   mysql -u root -p schema_17_1 < DML_schema_17_1.sql
+   mysql -u root -p schema_17_2 < DML_schema_17_2.sql
+   mysql -u root -p schema_17_3 < DML_schema_17_3.sql
+   ```
+
+3. **Realizar backups**:
+
+   Ejecuta cualquiera de los scripts de backup proporcionados según la necesidad de tu proyecto.
+
+4. **Restaurar los backups**:
+
+   Para restaurar los esquemas respaldados desde un archivo `.tar.gz`, utiliza el script de restauración:
+
+   ```bash
+   sudo ./restore_backup_schemas.sh /ruta/al/backup/BK_Fisico_TodosEsquemas_YYYYMMDD_HHMMSS.tar.gz
+   ```
 
 ## Notas de Seguridad
 
-- **Contraseña en los scripts**: Asegúrate de que los scripts no contengan contraseñas visibles o credenciales expuestas. Puedes proteger los scripts con permisos adecuados utilizando el siguiente comando:
+- **Contraseñas en los scripts**: Si los scripts incluyen la contraseña de MySQL, asegúrate de que el archivo tenga permisos de lectura restringidos para evitar la exposición de las credenciales:
 
   ```bash
-  chmod 600 script.sh
+  chmod 600 nombre_del_script.sh
   ```
 
-- **Backups físicos**: Ten en cuenta que los backups físicos copian los archivos binarios de MySQL, por lo que debes asegurarte de que el servidor esté correctamente apagado o los archivos bloqueados adecuadamente para evitar la corrupción de datos.
+- **Backups físicos**: Cuando realices backups físicos, asegúrate de que los archivos estén protegidos adecuadamente y que el servidor MySQL o MariaDB esté detenido para evitar inconsistencias en los datos.
 
-## Restauración de Backups
+## Contacto
 
-Para restaurar los backups realizados, utiliza los siguientes comandos:
-
-1. **Restauración de un backup lógico**:
-   
-   ```bash
-   mysql -u root -p < archivo_backup.sql
-   ```
-
-2. **Restauración de un backup físico**: Para restaurar un backup físico, debes copiar los archivos de vuelta a la ubicación original de MySQL y asegurarte de que los permisos y la estructura de directorios sean correctos. Asegúrate de detener el servidor MySQL antes de restaurar un backup físico.
+Para más información o en caso de problemas, puedes abrir una issue en el [repositorio](https://github.com/cresb-49/PRACTICA_BACKUP_RECUPERACI-N_BD2/issues).
