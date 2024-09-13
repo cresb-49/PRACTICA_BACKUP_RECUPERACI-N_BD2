@@ -118,7 +118,7 @@ CREATE TABLE facturas_17_3 (
 CREATE TABLE detalles_factura_17_3 (
     detalle_id INT PRIMARY KEY AUTO_INCREMENT,
     factura_id INT,
-    producto VARCHAR(100),
+    producto VARCHAR(250),
     cantidad INT,
     precio_unitario DECIMAL(10, 2),
     subtotal DECIMAL(10, 2)
