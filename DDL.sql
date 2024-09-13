@@ -1,3 +1,8 @@
+-- Creación de los esquemas si no existen
+CREATE DATABASE IF NOT EXISTS schema_17_1;
+CREATE DATABASE IF NOT EXISTS schema_17_2;
+CREATE DATABASE IF NOT EXISTS schema_17_3;
+
 -- Crear un nuevo usuario llamado 'admin_db2' con una contraseña segura, si no existe
 CREATE USER IF NOT EXISTS 'admin_db2'@'localhost' IDENTIFIED BY '201931012';
 
@@ -12,12 +17,6 @@ GRANT ALL PRIVILEGES ON schema_17_3.* TO 'admin_db2'@'localhost';
 
 -- Aplicar los cambios
 FLUSH PRIVILEGES;
-
-
--- Creación de los esquemas si no existen
-CREATE DATABASE IF NOT EXISTS schema_17_1;
-CREATE DATABASE IF NOT EXISTS schema_17_2;
-CREATE DATABASE IF NOT EXISTS schema_17_3;
 
 -- Uso del primer esquema
 USE schema_17_1;
