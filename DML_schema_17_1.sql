@@ -1,3 +1,7 @@
+-- Usar el esquema schema_17_1
+USE schema_17_1;
+
+-- Datos del esquema 1
 insert into tabla1_17_1 (id, nombre, descripcion, precio, cantidad) values (1, 'Hughie', 'exploit impactful communities', 43.84, 92);
 insert into tabla1_17_1 (id, nombre, descripcion, precio, cantidad) values (2, 'Licha', 'incubate web-enabled content', 41.32, 57);
 insert into tabla1_17_1 (id, nombre, descripcion, precio, cantidad) values (3, 'Augustin', 'deploy cutting-edge deliverables', 11.84, 3);

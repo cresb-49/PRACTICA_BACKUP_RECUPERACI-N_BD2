@@ -1,3 +1,5 @@
+use schema_17_2;
+
 insert into empleados_17_2 (empleado_id, nombre_completo, puesto, salario, fecha_contratacion) values (1, 'Tito Arr', 'Engineering', 5514, '2023-06-07');
 insert into empleados_17_2 (empleado_id, nombre_completo, puesto, salario, fecha_contratacion) values (2, 'Modestia Sainter', 'Product Management', 8748, '2023-08-25');
 insert into empleados_17_2 (empleado_id, nombre_completo, puesto, salario, fecha_contratacion) values (3, 'Harmony Sealey', 'Engineering', 4230, '2023-03-08');

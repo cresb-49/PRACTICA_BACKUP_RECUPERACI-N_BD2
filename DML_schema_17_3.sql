@@ -1,3 +1,5 @@
+use schema_17_3;
+
 insert into clientes_17_3 (cliente_id, nombre_cliente, direccion, telefono, correo_electronico) values (1, 'Jakie Aspy', '21 Mosinee Drive', '609-654-7272', 'jaspy0@ifeng.com');
 insert into clientes_17_3 (cliente_id, nombre_cliente, direccion, telefono, correo_electronico) values (2, 'Eddie Rozalski', '5 Evergreen Parkway', '531-829-8808', 'erozalski1@google.ca');
 insert into clientes_17_3 (cliente_id, nombre_cliente, direccion, telefono, correo_electronico) values (3, 'Ambrosi Bierling', '51 Sycamore Parkway', '825-421-3660', 'abierling2@ed.gov');
