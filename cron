@@ -1,0 +1,4 @@
+0 0 28-31 * * [ "$(date +\%d -d tomorrow)" = "01" ] && /ruta/al/logic_backup_all_db.sh # Cada último día de cada mes para el tipo 1 (completo)
+0 0 * * 5 /ruta/al/logic_backup_main_tables.sh  # Cada viernes para el tipo 2 (bases de datos principales)
+0 3,15 * * * /ruta/al/logic_backup_main_data.sh # Todos los días a las 3am y 3pm para el tipo 3 (solo datos)
+
